@@ -1,0 +1,27 @@
+{
+    "development": {
+      "username": "root",
+      "password": "",
+      "database": "end_pay_db",
+      "host": "127.0.0.1",
+      "dialect": "mysql",
+      "operatorsAliases": false
+    },
+    "test": {
+      "username": "",
+      "password": null,
+      "database": "end_pay_db",
+      "host": "127.0.0.1",
+      "dialect": "mysql",
+      "operatorsAliases": false
+    },
+    "production": {
+      "username": "",
+      "password": "",
+      "database": "end_pay_db",
+      "host": "127.0.0.1",
+      "dialect": "mysql",
+      "operatorsAliases": false
+    }
+  }
+  
