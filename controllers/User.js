@@ -91,7 +91,7 @@ class User {
     
     register = async (req, res) => {
         if (!req.body.name || !req.body.username || !req.body.email || !req.body.password || !req.body.password_conf ) {
-            res.send({
+            return res.send({
                 success: false,
                 message: "name, username, email, password, and password_conf is required!",
                 data: {}
@@ -99,7 +99,7 @@ class User {
         }
     
         if (req.body.password.length < 8) {
-            res.send({
+            return res.send({
                 success: false,
                 message: "your password must be create at least 8 characters!",
                 data: {}
@@ -107,7 +107,7 @@ class User {
         }
     
         if (req.body.password != req.body.password_conf) {
-            res.send({
+            return res.send({
                 success: false,
                 message: "your password and password_conf don't match!",
                 data: {}
@@ -123,10 +123,8 @@ class User {
             }
         })
 
-        console.log("findUser: ",findUser)
-
         if (findUser) {
-            res.send({
+            return res.send({
                 success: false,
                 message: "email is already in use!",
                 data: {}
@@ -134,32 +132,38 @@ class User {
         }
 
         var hashingPassword = await bcrypt.hash(req.body.password, 10)
-
-        console.log("hashingPassword: ",hashingPassword)
     
         var data = {
             name: req.body.name,
-            username: req.body.username,
+            username: req.body.username || 'tes',
+            phone: req.body.phone,
+            address: req.body.address,
             email: req.body.email,
             password: hashingPassword,
             is_verify: 0,
             account_type: 'reguler'
         }
     
-        user.create(data).then(data => {
+        user.create(data).then( async data => {
             if(data)
             {
-                const token = jwt.sign({ id: data.id }, process.env.JWT_TOKEN || 'tes', { expiresIn: '1d' });
-    
-                res.send({
+                const token = jwt.sign({ id: data.dataValues.id }, process.env.JWT_TOKEN || 'tes', { expiresIn: '1d' });
+
+                var newData = await user.findOne({ where: 
+                    {id: data.dataValues.id}, 
+                    attributes: {
+                        exclude: ['password']
+                    }
+                });
+                return res.send({
                     success: true,
                     message: "registration success",
                     data: {
-                        ...data.dataValues, token
+                        ...newData.dataValues, token
                     }
                 });
             } else {
-                res.send({
+                return res.send({
                     success: false,
                     message: "registation failed!",
                     data: {}

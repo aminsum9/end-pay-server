@@ -29,8 +29,6 @@ const authmiddleware = (req, res, next) => {
     if(dataUser)
     {
       req.user = dataUser.dataValues;
-      console.log("dataUser: ",dataUser)
-  
       next();
     } else {
       return res.status(403).send({ 
