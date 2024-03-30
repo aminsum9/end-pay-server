@@ -37,7 +37,7 @@ userballance.init({
         },
     }, {
     sequelize,
-    modelName: 'User'
+    modelName: 'UserBallance'
 });
 
 export default userballance;
