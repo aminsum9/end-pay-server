@@ -20,11 +20,11 @@ const accountTypes = {
 user.init({
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   username: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   email: {
     type: DataTypes.STRING,
@@ -38,8 +38,7 @@ user.init({
   },
   address: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+    allowNull: true,
   },
   password: {
     type: DataTypes.STRING,

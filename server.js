@@ -35,7 +35,7 @@ app.group("/api/v1", router => {
     router.post("/user/login", new User().login);
     router.post("/user/register", new User().register);
 
-    router.post("/user/upgrade-premium", new User().upgrade_premium);
+    router.post("/user/upgrade-premium",authmiddleware, new User().upgrade_premium);
 
     router.post("/userballance/get-user-ballance", authmiddleware, new UserBallance().get_user_ballance);
     router.post("/userballance/top-up-ballance", authmiddleware, new UserBallance().top_up_ballance);

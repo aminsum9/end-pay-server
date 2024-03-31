@@ -24,7 +24,7 @@ const authmiddleware = (req, res, next) => {
         });
     }
 
-    var dataUser = await user.findOne({id: decoded.id});
+    var dataUser = await user.findOne({where: {id: decoded.id}});
 
     if(dataUser)
     {

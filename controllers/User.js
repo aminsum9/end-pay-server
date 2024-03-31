@@ -40,7 +40,7 @@ class User {
             });
         }
     
-        var dataUser = await user.findOne({email: req.body.email})
+        var dataUser = await user.findOne({where: {email: req.body.email}})
     
         if(!dataUser)
         {
@@ -90,7 +90,7 @@ class User {
     };
     
     register = async (req, res) => {
-        if (!req.body.name || !req.body.username || !req.body.email || !req.body.password || !req.body.password_conf ) {
+        if (!req.body.phone || !req.body.email || !req.body.password || !req.body.password_conf ) {
             return res.send({
                 success: false,
                 message: "name, username, email, password, and password_conf is required!",
@@ -134,10 +134,10 @@ class User {
         var hashingPassword = await bcrypt.hash(req.body.password, 10)
     
         var data = {
-            name: req.body.name,
-            username: req.body.username || 'tes',
+            // name: req.body.name,
+            // username: req.body.username || '-',
             phone: req.body.phone,
-            address: req.body.address,
+            // address: req.body.address,
             email: req.body.email,
             password: hashingPassword,
             is_verify: 0,
@@ -173,76 +173,40 @@ class User {
     };
 
     upgrade_premium = async (req, res) => {
-        if (!req.body.name || !req.body.username || !req.body.email || !req.body.password || !req.body.password_conf ) {
-            return res.send({
-                success: false,
-                message: "name, username, email, password, and password_conf is required!",
-                data: {}
-            });
-        }
-    
-        if (req.body.password.length < 8) {
-            return res.send({
-                success: false,
-                message: "your password must be create at least 8 characters!",
-                data: {}
-            });
-        }
-    
-        if (req.body.password != req.body.password_conf) {
-            return res.send({
-                success: false,
-                message: "your password and password_conf don't match!",
-                data: {}
-            });
-        }
 
-        var findUser = await user.findOne({
-            where: {
-                email: req.body.email
-            },
-            attributes: {
-                exclude: ['password']
-            }
-        })
+        var dataUser = req.user;
 
-        if (findUser) {
+        if (!req.body.name || !req.body.username || !req.body.address ) {
             return res.send({
                 success: false,
-                message: "email is already in use!",
+                message: "name, username, and address is required!",
                 data: {}
             });
         }
-
-        var hashingPassword = await bcrypt.hash(req.body.password, 10)
     
         var data = {
             name: req.body.name,
-            username: req.body.username || 'tes',
-            phone: req.body.phone,
+            username: req.body.username || '-',
             address: req.body.address,
-            email: req.body.email,
-            password: hashingPassword,
-            is_verify: 0,
-            account_type: 'reguler'
+            is_verify: 1,
+            account_type: 'premium'
         }
     
-        user.create(data).then( async data => {
+        user.update(data,{where: {id: dataUser.id}}).then( async data => {
             if(data)
             {
-                const token = jwt.sign({ id: data.dataValues.id }, process.env.JWT_TOKEN || 'tes', { expiresIn: '1d' });
-
                 var newData = await user.findOne({ where: 
-                    {id: data.dataValues.id}, 
+                    {id: dataUser.id}, 
                     attributes: {
                         exclude: ['password']
                     }
                 });
+
                 return res.send({
                     success: true,
                     message: "registration success",
                     data: {
-                        ...newData.dataValues, token
+                        ...newData.dataValues
                     }
                 });
             } else {
