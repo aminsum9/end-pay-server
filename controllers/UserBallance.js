@@ -1,5 +1,4 @@
-import { Sequelize } from "sequelize";
-import user from "../models/user.js";
+import userModel from "../models/user.js";
 import userballance from "../models/userballance.js";
 
 class UserBallance {
@@ -35,14 +34,14 @@ class UserBallance {
             });
         }
 
-        if(typeof req.body.amount != 'number')
-        {
-            return res.send({
-                success: false,
-                message: 'amount must be number type!',
-                data: {}
-            });
-        }
+        // if(typeof req.body.amount != 'number')
+        // {
+        //     return res.send({
+        //         success: false,
+        //         message: 'amount must be number type!',
+        //         data: {}
+        //     });
+        // }
 
         if(req.body.amount <= 0)
         {
@@ -58,7 +57,7 @@ class UserBallance {
         newUserBallance.user_id = user.id;
         newUserBallance.amount = req.body.amount;
         newUserBallance.type = 'credit';
-        newUserBallance.status = 'pending';
+        newUserBallance.status = 'success'; // pending
 
         if(newUserBallance.save())
         {
@@ -89,14 +88,14 @@ class UserBallance {
             });
         }
 
-        if(typeof req.body.amount != 'number')
-        {
-            return res.send({
-                success: false,
-                message: 'amount must be number type!',
-                data: {}
-            });
-        }
+        // if(typeof req.body.amount != 'number')
+        // {
+        //     return res.send({
+        //         success: false,
+        //         message: 'amount must be number type!',
+        //         data: {}
+        //     });
+        // }
 
         if(req.body.amount <= 0)
         {
@@ -107,12 +106,23 @@ class UserBallance {
             });
         }
 
+        var userTo = await userModel.findOne({where: {email: req.body.email}})
+
+        if(!userTo)
+        {
+            return res.send({
+                success: false,
+                message: 'user not found!',
+                data: {}
+            });
+        }
+
         var newUserBallance = new userballance();
 
-        newUserBallance.user_id = req.body.user_id;
+        newUserBallance.user_id = userTo.id;
         newUserBallance.amount = req.body.amount;
         newUserBallance.type = 'credit';
-        newUserBallance.status = 'pending';
+        newUserBallance.status = 'success'; // pending
 
         if(newUserBallance.save())
         {
@@ -122,7 +132,7 @@ class UserBallance {
             newUserBallanceDebit.user_id = user.id;
             newUserBallanceDebit.amount = req.body.amount;
             newUserBallanceDebit.type = 'debit';
-            newUserBallanceDebit.status = 'pending';
+            newUserBallanceDebit.status = 'used';
 
             newUserBallanceDebit.save()
 
